@@ -7,3 +7,6 @@ from django.http.response import HttpResponse
 
 def display_markup(request):
     return render(request, 'siteapps/markup.html')
+
+def display_readings(request):
+    return render(request, 'siteapps/readings.html')

@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^org/(?P<org>\w+)/$', views.org, name='org'),
     url(r'^org/(?P<org>\w+)/(?P<docu>\w+-\w+-\w+-\w+-\w+)/$', views.doc, name='doc'),
     url(r'^register/$', views.register, name='register'),
+    url(r'^strapping/', include(siteapps_urls))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -92,6 +92,10 @@ def display_markup(request):
 def display_readings(request):
     return render(request, 'siteapps/readings.html')
 
+
+def display_registration(request):
+    return render(request, 'siteapps/registration.html')
+
 #
 def register(request):
     pass

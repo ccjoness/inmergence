@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ org.name }}<br>
+
+    {% for docs in doc %}
+    <a href="{{ docs.id }}">{{ docs.name }}</a><br>
+    {% endfor %}
+{% endblock %}

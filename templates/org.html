@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ org.name }}<br>
+
+    {% for docs in doc %}
+    {{ docs.name }}
+    {% endfor %}
+{% endblock %}

@@ -5,6 +5,12 @@
     <title>Title</title>
 </head>
 <body>
+<form action="/" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    File Type: <input type="text" name="fileFormat"><br>
+  <input type="file" name="file">
+  <input type="submit">
+</form>
 
 </body>
 </html>

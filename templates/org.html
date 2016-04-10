@@ -4,6 +4,6 @@
 {{ org.name }}<br>
 
     {% for docs in doc %}
-    {{ docs.name }}
+    <a href="{{ docs.id }}">{{ docs.name }}</a><br>
     {% endfor %}
 {% endblock %}

@@ -3,6 +3,11 @@ import cloudconvert
 from .models import Document, Organization, InmergenceUser
 import uuid
 import os
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from .forms import UserForm, UserProfileForm
 
 
 def clean_html(path, doc_name):
@@ -22,14 +27,19 @@ def clean_html(path, doc_name):
 
 
 def index(request):
-    usr = InmergenceUser.objects.get(user=request.user)
-    org = Organization.objects.get(user=usr)
-    context = {}
     if request.method == "POST":
+        usr = InmergenceUser.objects.get(user=request.user)
+        org = Organization.objects.get(user=usr)
         fformat = request.POST['fileFormat']
         file = request.FILES['file']
         id = uuid.uuid4()
-        doc, created = Document.objects.get_or_create(id=id, organization=org, name=file.name, file=file)
+        doc, created = Document.objects.get_or_create(
+            id=id,
+            organization=org,
+            name=file.name,
+            file=file,
+            html_name=file.name[:-3]+'html'
+        )
         doc.save()
         api = cloudconvert.Api('HKi3ooM6JI_caLFxb90B5lYONnKmoGjGNZ8R3Ozx22XB9pJJDzk1wx9fBgJEDqu-s_gmwWc1R31h_YPABQOZjw')
         process = api.convert({
@@ -48,9 +58,10 @@ def index(request):
         process.download(path)
         clean_html('C:\\projects\\inmergence_app\\templates\\', doc.file)
         context = {}
-
         return render(request, 'index.html', context)
-    return render(request, 'index.html', context)
+    else:
+        context = {}
+        return render(request, 'index.html', context)
 
 
 def org(request, org):
@@ -58,3 +69,35 @@ def org(request, org):
     cur_org = Organization.objects.get(name=org)
     docs = Document.objects.filter(organization=cur_org)
     return render(request, 'org.html', {'org': cur_org, 'doc': docs})
+
+
+def doc(request, org, docu):
+    print(org)
+    print(docu)
+    org_no_under = org.replace('_', ' ')
+    cur_org = Organization.objects.get(name=org_no_under)
+    doc = Document.objects.get(id=docu)
+    loca = str(doc.file)[:-3] + 'html'
+    print(loca)
+    return render(request, str(doc.file)[:-3] + 'html', {})
+
+#
+def register(request):
+    pass
+#     if request.method == 'POST':
+#         uf = UserForm(request.POST, prefix='user')
+#         upf = UserProfileForm(request.POST, prefix='userprofile')
+#         if uf.is_valid() * upf.is_valid():
+#             user = uf.save()
+#             userprofile = upf.save(commit=False)
+#             userprofile.user = user
+#             userprofile.save()
+#             return HttpResponseRedirect('/')
+#     else:
+#         uf = UserForm(prefix='user')
+#         upf = UserProfileForm(prefix='userprofile')
+#     return django.shortcuts.render_to_response('register.html',
+#                                                dict(userform=uf,
+#                                                     userprofileform=upf),
+#                                                context_instance=django.template.RequestContext(request))
+#     return render(request, "register.html", {'form': form})

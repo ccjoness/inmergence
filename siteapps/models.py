@@ -30,6 +30,7 @@ class Document(models.Model):
     organization = models.ForeignKey(Organization)
     id = models.CharField(max_length=250, primary_key=True)
     name = models.CharField(max_length=250)
+    html_name = models.CharField(max_length=1000)
     file = models.FileField(upload_to=file_upload_helper)
 
     def __str__(self):

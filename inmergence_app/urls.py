@@ -16,9 +16,13 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from siteapps import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.index, name='index'),
     url(r'^org/(?P<org>\w+)/$', views.org, name='org'),
-]
+    url(r'^org/(?P<org>\w+)/(?P<docu>\w+-\w+-\w+-\w+-\w+)/$', views.doc, name='doc'),
+    url(r'^register/$', views.register, name='register'),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

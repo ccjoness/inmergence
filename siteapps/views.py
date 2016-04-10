@@ -89,10 +89,11 @@ def doc(request, org, docu):
 def display_markup(request):
     return render(request, 'siteapps/markup.html')
 
+
 def display_readings(request):
     return render(request, 'siteapps/readings.html')
 
-#
+
 def register(request):
     pass
 #     if request.method == 'POST':

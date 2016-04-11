@@ -73,6 +73,14 @@
 <script src="{% static 'siteapps/js/TextPositionAnchor.js' %}"></script>
 <script>
     $('img[alt="background image"]').remove();
+
+    var ps = document.getElementsByTagName("p");
+    $.each(ps, function (html) {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    });
+
 </script>
 <script>
     function getSelectionText() {
@@ -88,7 +96,8 @@
 <script>
     var listOfText = [
         "What they don't understand about",
-        "Not mine,\" says everybody, \"Not me."
+        "Not mine,\" says everybody, \"Not me.",
+        "Because the way you grow old is kind of like"
     ];
     listOfText.forEach(function (ele) {
         var textHighlight = ele;

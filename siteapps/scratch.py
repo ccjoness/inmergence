@@ -1,37 +1,170 @@
-from bs4 import BeautifulSoup
-import os
-import re
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-pz = 'C:\\projects\\inmergence_app\\templates\\PDX_Code_Guild\\CisnerosSandra-Eleven.zip'
-
-with open(pz.replace('zip', 'html'), 'r+', encoding="utf8") as html:
-    with open(pz[:-4] + '-rendered.html', 'a', encoding="utf8") as wrt:
-        wrt.write('{% extends "base.html" %}')
-        wrt.write('{% block content %}')
-        for line in html.readlines()[37:-2]:
-            wrt.write(line)
-        wrt.write('{% endblock %}')
-
-# output = re.sub(r'(.*<body bgcolor="#A0A0A0" vlink="blue" link="blue">)',
-#                 string='{% extends "base.html" %}\n{% block content %}\n',
-#                 repl="\s"
-#                 )
-# out_str = ",".join(output)
-# with open("output.txt", "w") as outp:
-#     outp.write(out_str)
-# m = re.search(r'<h1>Title</h1>.*?<h1>', open(pz.replace('zip', 'html'), 'r+', encoding="utf8"), re.DOTALL)
-# s = m.start()
-# e = m.end() - len('<h1>')
-# target_html = html[s:e]
-# soup = BeautifulSoup(html, "html.parser")
-
-# html = ""
-# for tag in soup.find("body").next_siblings:
-#     if tag.name == "body":
-#         break
-#     else:
-#         html += tag
+# import os
 #
-# print(html)
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#
+# pz = 'G:\\OneDrive\\projects\\inmergence\\templates\\PDX_Code_Guild\\CisnerosSandra-Eleven.zip'
+#
+#
+# def inplace_change(filename, old_string, new_string):
+#     s = open(filename, encoding="utf8").read()
+#     if old_string in s:
+#         print('Changing "{old_string}" to "{new_string}"'.format(**locals()))
+#         s = s.replace(old_string, new_string)
+#         f = open(filename, 'w', encoding="utf8")
+#         f.write(s)
+#         f.flush()
+#         f.close()
+#     else:
+#         print('No occurrences of "{old_string}" found.'.format(**locals()))
+#
+#
+# with open(pz.replace('zip', 'html'), 'r+', encoding="utf8") as html:
+#     with open(pz[:-4] + '-rendered.html', 'a', encoding="utf8") as wrt:
+#         wrt.write('{% extends "base.html" %}')
+#         wrt.write('{% block content %}')
+#         for line in html.readlines()[37:-2]:
+#             wrt.write(line)
+#         wrt.write('{% endblock %}')
+#
+# html_escape_table = [
+#     ['&#32;', ' '],
+#     ['&#33;', '!'],
+#     ['&#34;', '"'],
+#     ['&#35;', '#'],
+#     ['&#36;', '$'],
+#     ['&#37;', '%'],
+#     ['&#38;', '&'],
+#     ['&#39;', '\''],
+#     ['&#40;', '('],
+#     ['&#41;', ')'],
+#     ['&#42;', '*'],
+#     ['&#43;', '+'],
+#     ['&#44;', ','],
+#     ['&#45;', '-'],
+#     ['&#46;', '.'],
+#     ['&#47;', '/'],
+#     ['&#48;', '0'],
+#     ['&#57;', '9'],
+#     ['&#58;', ':'],
+#     ['&#59;', ';'],
+#     ['&#60;', '<'],
+#     ['&#61;', '='],
+#     ['&#62;', '>'],
+#     ['&#63;', '?'],
+#     ['&#64;', '@'],
+#     ['&#65;', 'A'],
+#     ['&#90;', 'Z'],
+#     ['&#91;', '['],
+#     ['&#92;', '\\'],
+#     ['&#93;', ']'],
+#     ['&#94;', '^'],
+#     ['&#95;', '_'],
+#     ['&#96;', '`'],
+#     ['&#97;', 'a'],
+#     ['&#122;', 'z'],
+#     ['&#123;', '{'],
+#     ['&#124;', '|'],
+#     ['&#125;', '}'],
+#     ['&#126;', '~'],
+#     ['&#160;', ' '],
+#     ['&#161;', '¡'],
+#     ['&#162;', '¢'],
+#     ['&#163;', '£'],
+#     ['&#164;', '¤'],
+#     ['&#165;', '¥'],
+#     ['&#166;', '¦'],
+#     ['&#167;', '§'],
+#     ['&#168;', '¨'],
+#     ['&#169;', '©'],
+#     ['&#170;', 'ª'],
+#     ['&#171;', '«'],
+#     ['&#172;', '¬'],
+#     ['&#173;', '­'],
+#     ['&#174;', '®'],
+#     ['&#175;', '¯'],
+#     ['&#176;', '°'],
+#     ['&#177;', '±'],
+#     ['&#178;', '²'],
+#     ['&#179;', '³'],
+#     ['&#180;', '´'],
+#     ['&#181;', 'µ'],
+#     ['&#182;', '¶'],
+#     ['&#183;', '·'],
+#     ['&#184;', '¸'],
+#     ['&#185;', '¹'],
+#     ['&#186;', 'º'],
+#     ['&#187;', '»'],
+#     ['&#188;', '¼'],
+#     ['&#189;', '½'],
+#     ['&#190;', '¾'],
+#     ['&#191;', '¿'],
+#     ['&#192;', 'À'],
+#     ['&#193;', 'Á'],
+#     ['&#194;', 'Â'],
+#     ['&#195;', 'Ã'],
+#     ['&#196;', 'Ä'],
+#     ['&#197;', 'Å'],
+#     ['&#198;', 'Æ'],
+#     ['&#199;', 'Ç'],
+#     ['&#200;', 'È'],
+#     ['&#201;', 'É'],
+#     ['&#202;', 'Ê'],
+#     ['&#203;', 'Ë'],
+#     ['&#204;', 'Ì'],
+#     ['&#205;', 'Í'],
+#     ['&#206;', 'Î'],
+#     ['&#207;', 'Ï'],
+#     ['&#208;', 'Ð'],
+#     ['&#209;', 'Ñ'],
+#     ['&#210;', 'Ò'],
+#     ['&#211;', 'Ó'],
+#     ['&#212;', 'Ô'],
+#     ['&#213;', 'Õ'],
+#     ['&#214;', 'Ö'],
+#     ['&#215;', '×'],
+#     ['&#216;', 'Ø'],
+#     ['&#217;', 'Ù'],
+#     ['&#218;', 'Ú'],
+#     ['&#219;', 'Û'],
+#     ['&#220;', 'Ü'],
+#     ['&#221;', 'Ý'],
+#     ['&#222;', 'Þ'],
+#     ['&#223;', 'ß'],
+#     ['&#224;', 'à'],
+#     ['&#225;', 'á'],
+#     ['&#226;', 'â'],
+#     ['&#227;', 'ã'],
+#     ['&#228;', 'ä'],
+#     ['&#229;', 'å'],
+#     ['&#230;', 'æ'],
+#     ['&#231;', 'ç'],
+#     ['&#232;', 'è'],
+#     ['&#233;', 'é'],
+#     ['&#234;', 'ê'],
+#     ['&#235;', 'ë'],
+#     ['&#236;', 'ì'],
+#     ['&#237;', 'í'],
+#     ['&#238;', 'î'],
+#     ['&#239;', 'ï'],
+#     ['&#240;', 'ð'],
+#     ['&#241;', 'ñ'],
+#     ['&#242;', 'ò'],
+#     ['&#243;', 'ó'],
+#     ['&#244;', 'ô'],
+#     ['&#245;', 'õ'],
+#     ['&#246;', 'ö'],
+#     ['&#247;', '÷'],
+#     ['&#248;', 'ø'],
+#     ['&#249;', 'ù'],
+#     ['&#250;', 'ú'],
+#     ['&#251;', 'û'],
+#     ['&#252;', 'ü'],
+#     ['&#253;', 'ý'],
+#     ['&#254;', 'þ'],
+#     ['&#255;', 'ÿ']
+# ]
+#
+# for x in html_escape_table:
+#     inplace_change(pz[:-4] + '-rendered.html', x[0], x[1])
+#
+#

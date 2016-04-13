@@ -4,13 +4,12 @@ from django import forms
 
 
 class UserForm(forms.ModelForm):
-    pass
-    # class Meta:
-    #     model = User
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'password']
 
 
 class UserProfileForm(forms.ModelForm):
-    pass
-    # class Meta:
-    #     model = InmergenceUser
-    #     exclude = ['user']
+    class Meta:
+        model = InmergenceUser
+        fields = ['dob', 'sex', 'prof']

@@ -5,9 +5,13 @@ import uuid
 import os
 import zipfile
 import re
-
+from .forms import UserForm, UserProfileForm
 from django.shortcuts import render
-
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login
+from django.http import HttpResponseRedirect
+from django.contrib.auth.models import User
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -51,7 +55,7 @@ def clean_html(path, org_name, doc_name):
             except Exception as e:
                 print(e)
 
-    with open(pz.replace('zip', 'html'), 'r+', encoding="utf8") as html:
+    with open(pz.replace('.zip', '.html'), 'r+', encoding="utf8") as html:
         with open(pz[:-4] + '-rendered.html', 'a', encoding="utf8") as wrt:
             wrt.write('{% extends "base.html" %}\n')
             wrt.write('{% block content %}\n')
@@ -201,11 +205,13 @@ def clean_html(path, org_name, doc_name):
         inplace_change(pz[:-4] + '-rendered.html', x[0], x[1])
 
 
-def index(request):
+def upload_document(request):
     m = BASE_DIR + "\\media\\"
     t = BASE_DIR + "\\templates\\"
+    context = {}
     if request.method == "POST":
-        usr = InmergenceUser.objects.get(user=request.user)
+        usr = User.objects.get(username=request.user)
+        in_user = InmergenceUser.objects.get(user=usr)
         org = Organization.objects.get(user=usr)
         fformat = request.POST['fileFormat']
         file = request.FILES['file']
@@ -215,7 +221,8 @@ def index(request):
             organization=org,
             name=file.name,
             file=file,
-            html_name=file.name[:-3]+'html'
+            html_name=file.name[:-3] + 'html',
+            user=in_user
         )
         doc.save()
         api = cloudconvert.Api('HKi3ooM6JI_caLFxb90B5lYONnKmoGjGNZ8R3Ozx22XB9pJJDzk1wx9fBgJEDqu-s_gmwWc1R31h_YPABQOZjw')
@@ -233,13 +240,16 @@ def index(request):
             os.mkdir(path)
         process.wait()
         process.download(path)
-        real_file_name_to_zip = str(doc.file).replace(str(org.name).replace(" ", "_") + "/", "").replace('pdf', 'zip')
+        real_file_name_to_zip = str(doc.file).replace(str(org.name).replace(" ", "_") + "/", "").replace('.pdf', '.zip')
         clean_html(t, str(org.name).replace(' ', '_'), real_file_name_to_zip)
         context = {}
-        return render(request, 'index.html', context)
-    else:
-        context = {}
-        return render(request, 'index.html', context)
+
+    return render(request, 'index.html', context)
+
+
+def index(request):
+    context = {}
+    return render(request, 'index.html', context)
 
 
 def org(request, org):
@@ -260,32 +270,53 @@ def doc(request, org, docu):
     return render(request, str(doc.file)[:-4] + '-rendered.html', {})
 
 
-# Create your views here.
+@login_required
+def dashboard(request):
 
-def display_markup(request):
-    return render(request, 'siteapps/markup.html')
-
-
-def display_readings(request):
-    return render(request, 'siteapps/readings.html')
+    usr = User.objects.get(username=request.user)
+    org = Organization.objects.get(user=usr)
+    user_docs = Document.objects.filter(user__user=usr)
+    org_html_name = org.name.replace(' ', '_')
+    print(org_html_name)
+    return render(request, 'dashboard.html', {'org': org,
+                                              'user_docs': user_docs,
+                                              'org_html': org_html_name
+                                              })
 
 
 def register(request):
-    pass
-#     if request.method == 'POST':
-#         uf = UserForm(request.POST, prefix='user')
-#         upf = UserProfileForm(request.POST, prefix='userprofile')
-#         if uf.is_valid() * upf.is_valid():
-#             user = uf.save()
-#             userprofile = upf.save(commit=False)
-#             userprofile.user = user
-#             userprofile.save()
-#             return HttpResponseRedirect('/')
-#     else:
-#         uf = UserForm(prefix='user')
-#         upf = UserProfileForm(prefix='userprofile')
-#     return django.shortcuts.render_to_response('register.html',
-#                                                dict(userform=uf,
-#                                                     userprofileform=upf),
-#                                                context_instance=django.template.RequestContext(request))
-#     return render(request, "register.html", {'form': form})
+    registered = False
+
+    if request.method == 'POST':
+        user_form = UserForm(data=request.POST)
+        profile_form = UserProfileForm(data=request.POST)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+
+            user.set_password(user.password)
+            user.save()
+
+            profile = profile_form.save(commit=False)
+            profile.user = user
+
+            profile.save()
+
+            registered = True
+
+        else:
+            print(user_form.errors, profile_form.errors)
+
+    # Not a HTTP POST, so we render our form using two ModelForm instances.
+    # These forms will be blank, ready for user input.
+    else:
+        user_form = UserForm()
+        profile_form = UserProfileForm()
+
+    # Render the template depending on the context.
+    return render(request, 'register.html', {'user_form': user_form, 'profile_form': profile_form, 'registered': registered} )
+
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect('/')

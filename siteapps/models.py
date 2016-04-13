@@ -8,7 +8,7 @@ def file_upload_helper(instance, filename):
 
 
 class InmergenceUser(models.Model):
-    user = models.ForeignKey(User)
+    user = models.OneToOneField(User)
     dob = models.CharField(max_length=100)
     sex = models.CharField(max_length=100)
     prof = models.CharField(max_length=100)
@@ -18,7 +18,7 @@ class InmergenceUser(models.Model):
 
 
 class Organization(models.Model):
-    user = models.ForeignKey(InmergenceUser)
+    user = models.ForeignKey(User)
     name = models.CharField(max_length=250)
     id = models.CharField(max_length=250, primary_key=True)
 
@@ -28,6 +28,7 @@ class Organization(models.Model):
 
 class Document(models.Model):
     organization = models.ForeignKey(Organization)
+    user = models.ForeignKey(InmergenceUser)
     id = models.CharField(max_length=250, primary_key=True)
     name = models.CharField(max_length=250)
     html_name = models.CharField(max_length=1000)
